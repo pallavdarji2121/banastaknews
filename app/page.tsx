@@ -1,0 +1,20 @@
+import Link from 'next/link';import {sb} from '@/lib/supabase';
+export const revalidate=60;
+export default async function Home({searchParams}:{searchParams:Promise<any>}){const q=await searchParams;const s=await sb();
+const pg=Math.max(1,+q.page||1);
+let r=s.from('news').select('slug,title,summary,thumbnail_url,published_at,is_breaking,categories(name),districts(name),talukas(name),villages(name)').eq('status','published').is('deleted_at',null).order('published_at',{ascending:false}).range((pg-1)*12,pg*12-1);
+if(q.d)r=r.eq('district_id',+q.d);if(q.t)r=r.eq('taluka_id',+q.t);if(q.v)r=r.eq('village_id',+q.v);if(q.c)r=r.eq('category_id',+q.c);
+if(q.q)r=r.ilike('title',`%${String(q.q).replace(/[%,]/g,'')}%`);
+const [{data:news},{data:ds},{data:ts},{data:cs},{data:br}]=await Promise.all([r,s.from('districts').select('*'),s.from('talukas').select('*').match(q.d?{district_id:+q.d}:{}),s.from('categories').select('*').eq('active',true).order('sort'),s.from('news').select('title').eq('status','published').eq('is_breaking',true).order('published_at',{ascending:false}).limit(8)]);
+return <div>
+<header className="sticky top-0 z-40 bg-white dark:bg-neutral-900 border-b-4 border-red shadow-sm"><div className="max-w-6xl mx-auto px-3 py-2 flex items-center gap-3 flex-wrap"><img src="/logo.png" className="w-14 h-14 rounded-full" alt="બનાસ તક"/><Link href="/" className="text-2xl font-extrabold text-red">બનાસ તક</Link>
+<form className="ml-auto flex gap-2"><input name="q" defaultValue={q.q} placeholder="🔍 શોધો…" className="inp"/></form></div></header>
+<div className="bg-red text-white flex overflow-hidden"><b className="bg-red-900 bg-black/30 px-4 py-1 whitespace-nowrap">તાજા સમાચાર</b><div className="py-1 px-4 whitespace-nowrap overflow-hidden">{br?.map((b:any)=>b.title).join('  •  ')||'હાલ કોઈ બ્રેકિંગ સમાચાર નથી'}</div></div>
+<main className="max-w-6xl mx-auto px-3">
+<form className="flex gap-2 flex-wrap my-4"><select name="d" defaultValue={q.d} className="inp w-auto"><option value="">જિલ્લા પસંદ કરો</option>{ds?.map((d:any)=><option key={d.id} value={d.id}>{d.name}</option>)}</select><select name="t" defaultValue={q.t} className="inp w-auto"><option value="">તાલુકો</option>{ts?.map((d:any)=><option key={d.id} value={d.id}>{d.name}</option>)}</select><select name="c" defaultValue={q.c} className="inp w-auto"><option value="">બધી શ્રેણી</option>{cs?.map((d:any)=><option key={d.id} value={d.id}>{d.name}</option>)}</select><button className="btnr">ફિલ્ટર</button></form>
+<h2 className="text-xl font-extrabold border-b-2 mb-4">તાજા સમાચાર</h2>
+<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{news?.map((n:any)=><Link key={n.slug} href={`/news/${n.slug}`} className="border rounded-md overflow-hidden hover:shadow-lg group">{n.thumbnail_url&&<img src={n.thumbnail_url} loading="lazy" className="aspect-video w-full object-cover" alt=""/>}<div className="p-3"><span className="bg-red text-white text-xs px-2 rounded">{n.categories?.name}</span><h3 className="font-bold group-hover:text-red">{n.title}</h3><p className="text-xs text-neutral-500">📍 {[n.villages?.name,n.talukas?.name,n.districts?.name].filter(Boolean).join(', ')}</p></div></Link>)}</div>
+{!news?.length&&<p className="text-neutral-500">કોઈ સમાચાર મળ્યા નથી.</p>}
+<div className="flex gap-3 my-6">{pg>1&&<Link className="btn" href={{query:{...q,page:pg-1}}}>← પાછળ</Link>}{news?.length===12&&<Link className="btnr" href={{query:{...q,page:pg+1}}}>વધુ સમાચાર</Link>}</div>
+<div className="grid gap-4 md:grid-cols-2"><div className="box"><b>શેરબજાર</b><p className="text-sm text-neutral-500">{process.env.STOCK_API_KEY?'':'ડેટા ઉપલબ્ધ નથી – STOCK_API_KEY ગોઠવો.'}</p></div><div className="box"><b>ક્રિકેટ લાઇવ</b><p className="text-sm text-neutral-500">{process.env.CRICKET_API_KEY?'':'ડેટા ઉપલબ્ધ નથી – CRICKET_API_KEY ગોઠવો.'}</p></div></div>
+</main><footer className="bg-neutral-900 text-white border-t-4 border-red p-5 mt-8 text-sm text-center">© બનાસ તક • <a href="tel:9974860057">📞 9974860057</a> • <a href="https://wa.me/919974860057">WhatsApp</a></footer></div>}
