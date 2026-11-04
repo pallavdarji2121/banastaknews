@@ -9,3 +9,14 @@
 ## Not done yet
 Rich-text editor, gallery/video upload UI, village directory import, analytics charts/CSV, ads, sitemap/robots, notifications UI, stock/cricket API adapters, e-paper.
 Note: this code was written without running `npm install`/build; run `npm run build` and fix any type issue first.
+
+## v2 additions
+- New premium UI (hero, numbered latest, most-read, district chips, market strip, ticker, mobile bottom nav, dark mode).
+- `/video`, `/market`, `/cricket` pages. API keys go in `.env.local`: STOCK_API_KEY (twelvedata.com), CRICKET_API_KEY (cricketdata.org). Without keys the site shows "ડેટા ઉપલબ્ધ નથી" – never fake data.
+- Index symbols (NIFTY/SENSEX) depend on your Twelve Data plan; edit MARKET_SYMBOLS if a symbol returns an error.
+- Optional demo content: run `supabase/seed_demo.sql` once (after creating the admin).
+
+## v3
+- Already ran older schema? Run `supabase/patch_v3.sql` once (lets the seed script insert).
+- `npm run seed` (Node 20.6+) → 5 sample reporters (random passwords saved in `reporters-credentials.txt`, gitignored) + 24 sample news with demo covers.
+- NEVER commit `.env.local`. `.gitignore` is included now.

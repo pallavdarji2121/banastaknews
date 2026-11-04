@@ -19,7 +19,7 @@ create function is_admin() returns bool language sql stable security definer set
 create function news_guard() returns trigger language plpgsql security definer set search_path=public as $$
 declare p profiles;
 begin
- if is_admin() then new.updated_at=now();return new;end if;
+ if auth.uid() is null or is_admin() then new.updated_at=now();return new;end if;
  select * into p from profiles where id=auth.uid();
  if p.id is null or not p.active then raise exception 'inactive account';end if;
  if tg_op='INSERT' then new.author_id:=auth.uid();new.is_breaking:=false;new.is_featured:=false;new.reject_reason:=null;
