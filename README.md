@@ -32,3 +32,9 @@ Note: this code was written without running `npm install`/build; run `npm run bu
 2. Supabase → Authentication → Sign In / Providers: turn ON "Allow new users to sign up" (needed for reader signup). Optional: turn OFF "Confirm email" for instant login.
 3. Env (optional): CRON_SECRET (rashifal daily sync on Vercel), MARKET_PROVIDER, CRICKET_API_KEY.
 4. New: user login/signup/profile (/login, /me), bookmarks, e-paper (/epaper), reels (/reels), rashifal (/rashifal), gold (/gold), multi-section publishing, admin Users/Reels/E-paper/Rashifal, sitemap/robots/PWA manifest.
+
+## v6
+- Menu: all categories + વિડિયો/રીલ/રાશિફળ in ONE scrollable line (‹ › arrows); ઈ-પેપર next to WhatsApp in the top bar. Works even before patch_v5 (falls back to all categories).
+- Site opens in LIGHT mode by default; ☀️ લાઇટ / 🌙 ડાર્ક switch in top bar (choice remembered).
+- Home: weather (Open-Meteo, no key), e-paper promo with download, rashifal chips, reels row.
+- Still REQUIRED: run `supabase/patch_v5.sql` once (login, e-paper, reels, multi-section tables).
