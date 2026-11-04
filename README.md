@@ -20,3 +20,9 @@ Note: this code was written without running `npm install`/build; run `npm run bu
 - Already ran older schema? Run `supabase/patch_v3.sql` once (lets the seed script insert).
 - `npm run seed` (Node 20.6+) → 5 sample reporters (random passwords saved in `reporters-credentials.txt`, gitignored) + 24 sample news with demo covers.
 - NEVER commit `.env.local`. `.gitignore` is included now.
+
+## v4 (run in this order)
+1. Supabase SQL editor: (old DB) run `supabase/patch_v3.sql` then `supabase/patch_v4.sql`. New DB: `schema.sql` + `patch_v4.sql`.
+2. `.env.local`: MARKET_PROVIDER=yahoo (default, no key; unofficial/delayed) or twelvedata. CRICKET_API_KEY from cricketdata.org. Restart dev server after editing.
+3. `npm i` → `npm run seed` → `npm run dev`. Admin → "API સ્થિતિ" shows exact API errors.
+4. Admin sidebar: Dashboard, News, Reporters, Categories, Locations, Site Settings (name, logo, contact, socials, ticker, footer, pages, section toggles), API status.

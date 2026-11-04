@@ -1,6 +1,7 @@
 // npm run seed  -> creates 5 sample reporters (random passwords) + 24 SAMPLE news. Needs Node 20.6+ and admin already created.
 import {createClient} from '@supabase/supabase-js';import {writeFileSync} from 'fs';import {randomBytes} from 'crypto';
 const sb=createClient(process.env.NEXT_PUBLIC_SUPABASE_URL,process.env.SUPABASE_SERVICE_ROLE_KEY,{auth:{persistSession:false}});
+await sb.from('news').delete().like('slug','demo-%');
 const {data:tal}=await sb.from('talukas').select('id,name,district_id');const {data:cats}=await sb.from('categories').select('id,name');
 const T=n=>tal.find(x=>x.name===n);const C=n=>cats.find(x=>x.name===n)?.id;
 const {data:adm}=await sb.from('profiles').select('id').eq('role','admin').limit(1).single();if(!adm){console.log('પહેલા admin બનાવો (README step 3)');process.exit(1)}
@@ -36,6 +37,6 @@ const N=[
 ['સ્થાનિક','લાખણી','લાખણીમાં નવા પશુ દવાખાનાનું ઉદ્ઘાટન','પશુપાલકોને સુવિધા મળશે.','loc'],
 ['કૃષિ','કાંકરેજ','કાંકરેજમાં પશુપાલકો માટે તાલીમ શિબિર','દૂધ ઉત્પાદન વધારવાની ટિપ્સ.','agri']];
 const body=n=>`આ નમૂના (સેમ્પલ) સમાચાર છે, વાસ્તવિક ઘટના નથી.\n\n${n[3]}\n\nવાસ્તવિક સમાચાર રિપોર્ટર પેનલમાંથી ઉમેરાશે ત્યારે આ નમૂના સમાચાર એડમિન પેનલમાંથી કાઢી શકાશે.`;
-const rows=N.map((n,i)=>{const t=n[1]?T(n[1]):null;return {slug:'demo-'+Date.now().toString(36)+i,title:n[2]+' (નમૂના)',summary:n[3],body:body(n),category_id:C(n[0]),district_id:t?.district_id??null,taluka_id:t?.id??null,author_id:(reps[i%Math.max(reps.length,1)]||adm).id,status:'published',published_at:new Date(Date.now()-i*5400000).toISOString(),is_breaking:i<4,is_featured:i===0||i===5,views:Math.floor(Math.random()*900),thumbnail_url:`/demo/${n[4]}.svg`}});
+const rows=N.map((n,i)=>{const t=n[1]?T(n[1]):null;return {slug:'demo-'+Date.now().toString(36)+i,title:n[2]+' (નમૂના)',summary:n[3],body:body(n),category_id:C(n[0]),district_id:t?.district_id??null,taluka_id:t?.id??null,author_id:(reps[i%Math.max(reps.length,1)]||adm).id,status:'published',published_at:new Date(Date.now()-i*5400000).toISOString(),is_breaking:i<4,is_featured:i===0||i===5,views:Math.floor(Math.random()*900),thumbnail_url:`https://picsum.photos/seed/banas${i}x/800/450`,gallery:[`https://picsum.photos/seed/banas${i}a/800/450`,`https://picsum.photos/seed/banas${i}b/800/450`]}});
 const {error}=await sb.from('news').insert(rows);console.log(error?error.message:`✅ ${rows.length} નમૂના સમાચાર ઉમેર્યા`);
 writeFileSync('reporters-credentials.txt',lines.join('\n'));console.log(lines.join('\n'),'\n(ફાઇલ: reporters-credentials.txt – કોઈને શેર/commit ન કરો)');

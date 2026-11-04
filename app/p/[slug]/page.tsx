@@ -1,0 +1,3 @@
+import {notFound} from 'next/navigation';import {Header,Footer} from '@/lib/ui';import {getSite,PAGES} from '@/lib/site';
+export default async function P({params}:{params:Promise<any>}){const {slug}=await params;if(!PAGES[slug])notFound();const S=await getSite();
+return <div><Header/><main className="wrap py-12 max-w-3xl"><h1 className="text-4xl font-black mb-6 pb-4 border-b-4 border-red">{PAGES[slug][0]}</h1><div className="whitespace-pre-wrap text-lg leading-9">{S.pages[slug]||PAGES[slug][1]}</div>{slug==='contact'&&<div className="flex gap-3 mt-8 flex-wrap"><a className="btnr" href={`tel:${S.phone}`}>📞 {S.phone}</a><a className="btn" href={`https://wa.me/${S.wa}`}>💬 WhatsApp</a></div>}</main><Footer/></div>}

@@ -1,0 +1,7 @@
+import {guard} from '@/lib/admin';import {getMarket,getCricket} from '@/lib/data';import {PT,Panel} from '@/lib/ui';
+export const dynamic='force-dynamic';
+export default async function P(){await guard();const [m,c]=await Promise.all([getMarket(true),getCricket(true)]);
+return <><PT t="API સ્થિતિ" sub="લાઇવ ટેસ્ટ – શેરબજાર અને ક્રિકેટ શા માટે ન દેખાય તે અહીં સ્પષ્ટ દેખાશે"/>
+<Panel t="📈 શેરબજાર"><p className="text-sm mb-2">પ્રોવાઇડર: <b>{process.env.MARKET_PROVIDER||'yahoo'}</b> • STOCK_API_KEY: <b>{process.env.STOCK_API_KEY?'✅ સેટ':'— ખાલી'}</b></p>{m.err?<p className="text-red font-bold">{m.err}</p>:<><p className="text-xs text-neutral-500 mb-2">સ્ત્રોત: {m.src}</p>{m.rows.map((r:any)=><div key={r.label} className="py-2 border-b last:border-0"><b>{r.label}</b>: {r.err?<span className="text-red">❌ {r.err}</span>:<span className="text-green-600">✅ {r.price} ({r.pct.toFixed(2)}%)</span>}</div>)}</>}</Panel>
+<Panel t="🏏 ક્રિકેટ"><p className="text-sm mb-2">CRICKET_API_KEY: <b>{process.env.CRICKET_API_KEY?'✅ સેટ':'— ખાલી'}</b></p>{c.err?<p className="text-red font-bold">❌ {c.err}</p>:<p className="text-green-600 font-bold">✅ {c.m.length} મેચ મળી ({c.src})</p>}</Panel>
+<Panel t="ℹ️ સૂચના"><ul className="list-disc pl-6 text-sm space-y-1"><li>.env.local બદલ્યા પછી server બંધ કરી ફરી <code>npm run dev</code> ચલાવો.</li><li>Twelve Data ના free plan માં ભારતીય index ન પણ હોય – તેથી ડિફોલ્ટ Yahoo (અનધિકૃત, વિલંબિત) છે. Twelve Data વાપરવા: <code>MARKET_PROVIDER=twelvedata</code>.</li><li>CricAPI free plan માં રોજના hits મર્યાદિત છે.</li></ul></Panel></>}

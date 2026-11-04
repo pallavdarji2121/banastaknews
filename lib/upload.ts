@@ -1,0 +1,2 @@
+export async function up(s:any,uid:string,file:File|null,kinds:string[],max:number){if(!file||!file.size||!kinds.includes(file.type)||file.size>max)return null;
+const p=`${uid}/${Date.now()}-${Math.random().toString(36).slice(2)}.${file.type.split('/')[1]}`;const {error}=await s.storage.from('media').upload(p,file,{contentType:file.type});return error?null:s.storage.from('media').getPublicUrl(p).data.publicUrl}
