@@ -26,3 +26,9 @@ Note: this code was written without running `npm install`/build; run `npm run bu
 2. `.env.local`: MARKET_PROVIDER=yahoo (default, no key; unofficial/delayed) or twelvedata. CRICKET_API_KEY from cricketdata.org. Restart dev server after editing.
 3. `npm i` → `npm run seed` → `npm run dev`. Admin → "API સ્થિતિ" shows exact API errors.
 4. Admin sidebar: Dashboard, News, Reporters, Categories, Locations, Site Settings (name, logo, contact, socials, ticker, footer, pages, section toggles), API status.
+
+## v5 (IMPORTANT order)
+1. Supabase → SQL editor → run `supabase/patch_v5.sql` (new tables: members, bookmarks, epapers, reels, rashifal; sections, nav; PDF uploads).
+2. Supabase → Authentication → Sign In / Providers: turn ON "Allow new users to sign up" (needed for reader signup). Optional: turn OFF "Confirm email" for instant login.
+3. Env (optional): CRON_SECRET (rashifal daily sync on Vercel), MARKET_PROVIDER, CRICKET_API_KEY.
+4. New: user login/signup/profile (/login, /me), bookmarks, e-paper (/epaper), reels (/reels), rashifal (/rashifal), gold (/gold), multi-section publishing, admin Users/Reels/E-paper/Rashifal, sitemap/robots/PWA manifest.

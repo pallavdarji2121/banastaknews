@@ -1,14 +1,14 @@
-import Link from 'next/link';import {sb} from '@/lib/supabase';import {Header,Footer,Card,Mini,Thumb,Sec,CatBlock,MarketStrip,Ticker,ago} from '@/lib/ui';import {getMarket,getCricket} from '@/lib/data';import {getSite} from '@/lib/site';
+import Link from 'next/link';import {sb} from '@/lib/supabase';import {Header,Footer,Card,Mini,Thumb,Sec,CatBlock,MarketStrip,Ticker,ago} from '@/lib/ui';import {getMarket,getCricket} from '@/lib/data';import {getSite} from '@/lib/site';import {getMember} from '@/lib/member';
 export const revalidate=60;
-const SEL='id,slug,title,summary,thumbnail_url,video_url,published_at,is_breaking,is_featured,views,category_id,district_id,taluka_id,categories(name),districts(name),talukas(name),villages(name)';
+const SEL='id,sections,slug,title,summary,thumbnail_url,video_url,published_at,is_breaking,is_featured,views,category_id,district_id,taluka_id,categories(name),districts(name),talukas(name),villages(name)';
 const CATS=['ગુજરાત','દેશ','વિશ્વ','રાજકારણ','બિઝનેસ','ક્રિકેટ','રમતગમત','મનોરંજન','ટેકનોલોજી','શિક્ષણ','રોજગાર','કૃષિ','આરોગ્ય','ધાર્મિક','અકસ્માત અને ગુનાખોરી'];
 export default async function Home({searchParams}:{searchParams:Promise<any>}){const q=await searchParams;const s=await sb();
 const filt=q.d||q.t||q.v||q.c||q.q;const pg=Math.max(1,+q.page||1);
 let r=s.from('news').select(SEL).eq('status','published').is('deleted_at',null).order('published_at',{ascending:false});
-if(q.d)r=r.eq('district_id',+q.d);if(q.t)r=r.eq('taluka_id',+q.t);if(q.v)r=r.eq('village_id',+q.v);if(q.c)r=r.eq('category_id',+q.c);
+if(q.d)r=r.eq('district_id',+q.d);if(q.t)r=r.eq('taluka_id',+q.t);if(q.v)r=r.eq('village_id',+q.v);if(q.c)r=r.or(`category_id.eq.${+q.c},sections.cs.{${+q.c}}`);
 if(q.q)r=r.ilike('title',`%${String(q.q).replace(/[%,]/g,'')}%`);
 r=filt?r.range((pg-1)*12,pg*12-1):r.limit(120);
-const [{data:news},{data:ts}]=await Promise.all([r,s.from('talukas').select('id,name,district_id').order('name')]);const L:any[]=news||[];
+const [{data:news},{data:ts},{data:cl}]=await Promise.all([r,s.from('talukas').select('id,name,district_id').order('name'),s.from('categories').select('id,name').eq('active',true).order('sort')]);const L:any[]=news||[];
 const S=await getSite();const br=[...String(S.ticker||'').split('\n').map((x:string)=>x.trim()).filter(Boolean),...L.filter(n=>n.is_breaking).slice(0,8).map(n=>n.title)];
 const Top=<><Header/><Ticker items={br}/><MarketStrip/></>;
 if(filt)return <div>{Top}<main className="wrap"><Sec t={q.q?`શોધ: ${q.q}`:'સમાચાર'}><div className="flex gap-2 flex-wrap mb-4">{ts?.filter((t:any)=>!q.d||t.district_id==+q.d).map((t:any)=><Link key={t.id} href={`/?t=${t.id}`} className={`px-3 py-1 rounded-full border text-sm ${q.t==t.id?'bg-red text-white border-red':''}`}>{t.name}</Link>)}</div>
@@ -17,7 +17,7 @@ if(filt)return <div>{Top}<main className="wrap"><Sec t={q.q?`શોધ: ${q.q}`:
 const [mk,ck]=await Promise.all([getMarket(),getCricket()]);
 const top=[...L.slice(0,12)].sort((a,b)=>(b.is_featured?1:0)-(a.is_featured?1:0));const hero=top[0];
 const trend=[...L].sort((a,b)=>(b.views||0)-(a.views||0)).slice(0,6);
-const dist=(id:number)=>L.filter(n=>n.district_id===id).slice(0,4);const cat=(c:string)=>L.filter(n=>n.categories?.name===c);
+const dist=(id:number)=>L.filter(n=>n.district_id===id).slice(0,4);const mem=await getMember();const cat=(id:number)=>L.filter(n=>n.category_id===id||n.sections?.includes(id));const mine=mem?.taluka_id?L.filter(n=>n.taluka_id===mem.taluka_id).slice(0,4):[];
 const Chips=({id}:{id:number})=><div className="flex gap-2 flex-wrap mb-4"><Link href={`/?d=${id}`} className="px-3 py-1 rounded-full bg-red text-white text-sm">બધા વિસ્તારો</Link>{ts?.filter((t:any)=>t.district_id===id).map((t:any)=><Link key={t.id} href={`/?t=${t.id}`} className="px-3 py-1 rounded-full border text-sm hover:border-red hover:text-red">{t.name}</Link>)}</div>;
 const vids=L.filter(n=>n.video_url).slice(0,4);
 if(!L.length)return <div>{Top}<main className="wrap"><div className="box text-center my-10"><h2 className="text-xl font-black">હજી કોઈ સમાચાર પ્રકાશિત નથી</h2><p className="text-neutral-500">Terminal માં <code>npm run seed</code> ચલાવો અથવા admin પેનલમાંથી સમાચાર મંજૂર કરો.</p></div></main><Footer/></div>;
@@ -30,9 +30,10 @@ return <div>{Top}<main className="wrap">
 {(S.show.market||S.show.cricket)&&<div className="grid gap-5 md:grid-cols-3 my-6"><div className="rounded-2xl border p-4 md:col-span-1"><h3 className="font-black text-lg border-b-2 border-red pb-2 mb-2">📈 શેરબજાર</h3>{mk.err?<p className="text-sm text-neutral-500">{mk.err}</p>:mk.rows.map((r:any)=><div key={r.label} className="flex justify-between py-1.5 border-b last:border-0"><b>{r.label}</b>{r.err?<span className="text-neutral-500 text-sm">ડેટા નથી</span>:<span>{r.price.toLocaleString('en-IN')} <b className={r.pct>=0?'text-green-600':'text-red'}>{r.pct>=0?'▲':'▼'}{Math.abs(r.pct).toFixed(2)}%</b></span>}</div>)}<Link href="/market" className="text-red text-sm font-bold">વધુ →</Link></div>
 <div className="rounded-2xl border p-4 md:col-span-1"><h3 className="font-black text-lg border-b-2 border-red pb-2 mb-2">🏏 ક્રિકેટ</h3>{ck.err?<p className="text-sm text-neutral-500">{ck.err}</p>:ck.m.slice(0,3).map((x:any)=><div key={x.id} className="py-1.5 border-b last:border-0 text-sm"><b>{x.name}</b><div className="text-red">{x.status}</div></div>)}<Link href="/cricket" className="text-red text-sm font-bold">વધુ →</Link></div>
 <div className="rounded-2xl bg-gradient-to-br from-red to-neutral-900 text-white p-5 flex flex-col justify-center"><h3 className="text-xl font-black">તમારા ગામના સમાચાર મોકલો</h3><p className="text-sm opacity-90 my-2">ફોટો/વિડિયો સાથે WhatsApp કરો, અમે પ્રકાશિત કરીશું.</p><a href="https://wa.me/919974860057" className="bg-white text-red font-bold rounded-lg px-4 py-2 text-center">💬 {S.phone}</a></div></div>}
+{mine.length>0&&<Sec t="⭐ તમારા તાલુકાના સમાચાર"><div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">{mine.map(n=><Card key={n.id} n={n}/>)}</div></Sec>}
 {dist(1).length>0&&<Sec t="બનાસકાંઠાની વાત" href="/?d=1"><Chips id={1}/><div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">{dist(1).map(n=><Card key={n.id} n={n}/>)}</div></Sec>}
 {dist(2).length>0&&<Sec t="વાવ-થરાદ વિશેષ" href="/?d=2"><Chips id={2}/><div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">{dist(2).map(n=><Card key={n.id} n={n}/>)}</div></Sec>}
 {S.show.video&&vids.length>0&&<Sec t="📺 વિડિયો સમાચાર" href="/video"><div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">{vids.map(n=><Card key={n.id} n={n} sm/>)}</div></Sec>}
 {S.show.taluka&&<Sec t="તમારો તાલુકો પસંદ કરો"><div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3">{ts?.map((t:any)=><Link key={t.id} href={`/?t=${t.id}`} className="rounded-xl border p-3 text-center font-bold hover:bg-red hover:text-white hover:border-red transition">📍 {t.name}<div className="text-xs font-normal opacity-70">{t.district_id===1?'બનાસકાંઠા':'વાવ-થરાદ'}</div></Link>)}</div></Sec>}
-{S.show.cats&&<div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3 my-8">{CATS.map(c=>cat(c).length>0&&<CatBlock key={c} t={c} href={`/?c=${cat(c)[0].category_id}`} items={cat(c)}/>)}</div>}
+{S.show.cats&&<div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3 my-8">{cl?.map((c:any)=>cat(c.id).length>0&&<CatBlock key={c.id} t={c.name} href={`/?c=${c.id}`} items={cat(c.id)}/>)}</div>}
 </main><Footer/></div>}

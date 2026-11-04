@@ -1,6 +1,6 @@
 import {redirect} from 'next/navigation';import {revalidatePath} from 'next/cache';import {sb,me} from '@/lib/supabase';import {saveNews} from '@/lib/news';import NewsFields from '@/lib/NewsFields';import {PT,Panel,Msg} from '@/lib/ui';
 async function add(f:FormData){'use server';const m=await me();if(!m||!m.active)redirect('/report');const r:any=await saveNews(m,f,String(f.get('mode')));revalidatePath('/');redirect(`/reporter/${m.reporter_code}/new?m=${r.err?'err':'ok'}`)}
 export default async function P({params,searchParams}:{params:Promise<any>,searchParams:Promise<any>}){const q=await searchParams;const {id}=await params;const s=await sb();
-const {data:p}=await s.from('profiles').select('taluka_id').eq('reporter_code',id).single();
+const {data:p}=await s.from('profiles').select('taluka_id,talukas(name)').eq('reporter_code',id).single();
 const [{data:cats},{data:vs}]=await Promise.all([s.from('categories').select('id,name').eq('active',true).order('sort'),s.from('villages').select('name').eq('taluka_id',p?.taluka_id||0)]);
-return <><PT t="નવા સમાચાર લખો" sub="સબમિટ કર્યા પછી એડમિન મંજૂરી આપશે ત્યારે વેબસાઇટ પર દેખાશે"/><Msg m={q.m}/><Panel><form action={add}><NewsFields cats={cats||[]} vil={vs?.map((v:any)=>v.name)}/></form></Panel></>}
+return <><PT t="નવા સમાચાર લખો" sub="સબમિટ કર્યા પછી એડમિન મંજૂરી આપશે ત્યારે વેબસાઇટ પર દેખાશે"/><Msg m={q.m}/><Panel><form action={add}><NewsFields cats={cats||[]} vil={vs?.map((v:any)=>v.name)} loc={(p as any)?.talukas?.name}/></form></Panel></>}

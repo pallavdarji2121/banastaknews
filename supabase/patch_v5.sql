@@ -1,0 +1,40 @@
+-- v5: run once in Supabase SQL editor (safe to re-run)
+alter table news add column if not exists sections int[] default '{}';
+alter table categories add column if not exists nav bool default true;
+create index if not exists news_sections_gin on news using gin(sections);
+update news set sections=array[category_id] where category_id is not null and (sections is null or sections='{}');
+create or replace function news_guard() returns trigger language plpgsql security definer set search_path=public as $$
+declare p profiles;
+begin
+ if tg_op='UPDATE' and new.views is distinct from old.views and new.title=old.title and new.body=old.body then return new;end if;
+ if auth.uid() is null or is_admin() then new.updated_at=now();return new;end if;
+ select * into p from profiles where id=auth.uid();
+ if p.id is null or not p.active then raise exception 'inactive account';end if;
+ if tg_op='INSERT' then new.author_id:=auth.uid();new.is_breaking:=false;new.is_featured:=false;new.reject_reason:=null;
+ else new.author_id:=old.author_id;new.is_breaking:=old.is_breaking;new.is_featured:=old.is_featured;new.reject_reason:=old.reject_reason;end if;
+ if new.status in('approved','scheduled','archived') then new.status:='pending';end if;
+ if new.status='published' and not p.can_publish then new.status:='pending';end if;
+ if new.status='published' and new.published_at is null then new.published_at:=now();end if;
+ new.updated_at:=now();return new;
+end $$;
+create or replace function bump_views(nid uuid) returns void language sql security definer set search_path=public as $$update news set views=views+1 where id=nid and status='published'$$;
+grant execute on function bump_views(uuid) to anon,authenticated;
+create table if not exists members(id uuid primary key references auth.users on delete cascade,full_name text,email text,mobile text,taluka_id int references talukas,created_at timestamptz default now());
+create table if not exists bookmarks(user_id uuid references auth.users on delete cascade,news_id uuid references news on delete cascade,created_at timestamptz default now(),primary key(user_id,news_id));
+create table if not exists epapers(id uuid primary key default gen_random_uuid(),title text,edition_date date not null,pdf_url text not null,cover_url text,created_at timestamptz default now());
+create table if not exists reels(id uuid primary key default gen_random_uuid(),title text,video_url text not null,author_id uuid references profiles,taluka_id int references talukas,active bool default false,created_at timestamptz default now());
+create table if not exists rashifal(sign text,day date,text text,src text,primary key(sign,day));
+alter table members enable row level security;alter table bookmarks enable row level security;alter table epapers enable row level security;alter table reels enable row level security;alter table rashifal enable row level security;
+drop policy if exists mem_r on members;drop policy if exists mem_i on members;drop policy if exists mem_u on members;
+create policy mem_r on members for select using(id=auth.uid() or is_admin());create policy mem_i on members for insert with check(id=auth.uid());create policy mem_u on members for update using(id=auth.uid());
+drop policy if exists bm_all on bookmarks;create policy bm_all on bookmarks for all using(user_id=auth.uid()) with check(user_id=auth.uid());
+drop policy if exists ep_r on epapers;drop policy if exists ep_w on epapers;create policy ep_r on epapers for select using(true);create policy ep_w on epapers for all using(is_admin()) with check(is_admin());
+drop policy if exists rs_r on rashifal;drop policy if exists rs_w on rashifal;create policy rs_r on rashifal for select using(true);create policy rs_w on rashifal for all using(is_admin()) with check(is_admin());
+drop policy if exists rl_r on reels;drop policy if exists rl_i on reels;drop policy if exists rl_w on reels;
+create policy rl_r on reels for select using(active or author_id=auth.uid() or is_admin());
+create policy rl_i on reels for insert with check(is_admin() or (author_id=auth.uid() and (active=false or exists(select 1 from profiles p where p.id=auth.uid() and p.can_publish))));
+create policy rl_w on reels for all using(is_admin()) with check(is_admin());
+update storage.buckets set allowed_mime_types=array['image/jpeg','image/png','image/webp','video/mp4','application/pdf'] where id='media';
+insert into categories(name,sort) values ('બનાસ તક ખાસ',1),('મારું ગુજરાત',2),('મારું ઇન્ડિયા',3),('ગોલ્ડ',6),('ધર્મ દર્શન',7),('રાશિફળ',11) on conflict(name) do nothing;
+update categories c set sort=v.s,nav=true,active=true from (values ('બનાસ તક ખાસ',1),('મારું ગુજરાત',2),('મારું ઇન્ડિયા',3),('ક્રિકેટ',4),('શેરબજાર',5),('ગોલ્ડ',6),('ધર્મ દર્શન',7),('રાજકારણ',8),('રમતગમત',9),('વિશ્વ',10),('રાશિફળ',11)) v(n,s) where c.name=v.n;
+update categories set nav=false where name not in (select * from (values ('બનાસ તક ખાસ'),('મારું ગુજરાત'),('મારું ઇન્ડિયા'),('ક્રિકેટ'),('શેરબજાર'),('ગોલ્ડ'),('ધર્મ દર્શન'),('રાજકારણ'),('રમતગમત'),('વિશ્વ'),('રાશિફળ')) t(n));

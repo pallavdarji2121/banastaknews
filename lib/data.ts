@@ -8,3 +8,7 @@ const rows=await Promise.all(Object.keys(YH).map(async label=>{try{const r=await
 return {rows,src:'Yahoo Finance (અનધિકૃત, વિલંબિત ડેટા)'}}
 export async function getCricket(fresh=false):Promise<any>{const k=process.env.CRICKET_API_KEY;if(!k)return {err:'CRICKET_API_KEY ગોઠવાયેલ નથી (.env.local માં ઉમેરી server restart કરો)'};
 try{const r=await fetch(`https://api.cricapi.com/v1/currentMatches?apikey=${k}&offset=0`,fresh?{cache:'no-store'}:{next:{revalidate:60}});const j=await r.json();if(j.status!=='success')return {err:'API જવાબ: '+(j.reason||j.status||'ભૂલ')};return {m:(j.data||[]).slice(0,20),src:'CricAPI'}}catch(e:any){return {err:'નેટવર્ક ભૂલ: '+String(e.message)}}}
+export async function getGold(fresh=false):Promise<any>{const opt:any=fresh?{cache:'no-store'}:{next:{revalidate:300}};
+try{const [g,sv,fx]=await Promise.all([fetch('https://api.gold-api.com/price/XAU',opt).then(r=>r.json()),fetch('https://api.gold-api.com/price/XAG',opt).then(r=>r.json()),fetch('https://query1.finance.yahoo.com/v8/finance/chart/INR%3DX?interval=1d&range=1d',{...opt,headers:{'User-Agent':'Mozilla/5.0'}}).then(r=>r.json())]);
+const usd=fx?.chart?.result?.[0]?.meta?.regularMarketPrice;if(!g?.price||!sv?.price||!usd)return {err:'ગોલ્ડ/સિલ્વર ડેટા ઉપલબ્ધ નથી (API જવાબ અધૂરો)'};const OZ=31.1035;
+return {usdinr:usd,gold10g:g.price/OZ*10*usd,silverKg:sv.price/OZ*1000*usd,goldUsd:g.price,silverUsd:sv.price,at:g.updatedAt,src:'gold-api.com + Yahoo (USD/INR)'}}catch(e:any){return {err:'ગોલ્ડ ડેટા ઉપલબ્ધ નથી: '+String(e.message)}}}

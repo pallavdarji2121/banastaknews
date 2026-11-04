@@ -1,6 +1,6 @@
 import {sb,svc} from './supabase';import {up} from './upload';
 const IMG=['image/jpeg','image/png','image/webp'];
-export async function saveNews(m:any,f:FormData,mode:string){const s=await sb();const adm=m.role==='admin';
+export async function saveNews(m:any,f:FormData,mode:string){const s=await sb();const adm=m.role==='admin';const secs=(f.getAll('sec') as string[]).map(Number).filter(Boolean);if(!secs.length)return {err:'ઓછામાં ઓછો એક વિભાગ પસંદ કરો'};
 const t=adm?(+(f.get('t') as string)||null):m.taluka_id;let d=m.district_id;
 if(adm&&t){const {data:tk}=await s.from('talukas').select('district_id').eq('id',t).single();d=tk?.district_id}
 let vid=null;const vn=String(f.get('vn')||'').trim().slice(0,80);
@@ -9,8 +9,11 @@ const thumb=await up(s,m.id,f.get('img') as File,IMG,5e6);const gal:string[]=[];
 for(const g of f.getAll('gal') as File[]){if(gal.length>=6)break;const u=await up(s,m.id,g,IMG,5e6);if(u)gal.push(u)}
 const vf=await up(s,m.id,f.get('vf') as File,['video/mp4'],50e6);
 const st=mode==='draft'?'draft':(adm||m.can_publish?'published':'pending');
-const {data:n,error}=await s.from('news').insert({title:String(f.get('title')).slice(0,250),summary:String(f.get('summary')||'').slice(0,500),body:String(f.get('body')),category_id:+(f.get('c') as string)||null,district_id:d,taluka_id:t,village_id:vid,thumbnail_url:thumb,gallery:gal,video_url:vf||String(f.get('yt')||'').trim()||null,breaking_requested:!!f.get('bk'),is_breaking:adm&&!!f.get('bk')&&st==='published',author_id:m.id,slug:'n-'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),status:st,published_at:st==='published'?new Date().toISOString():null}).select('id,status').single();
+const {data:n,error}=await s.from('news').insert({title:String(f.get('title')).slice(0,250),summary:String(f.get('summary')||'').slice(0,500),body:String(f.get('body')),category_id:secs[0],sections:secs,district_id:d,taluka_id:t,village_id:vid,thumbnail_url:thumb,gallery:gal,video_url:vf||String(f.get('yt')||'').trim()||null,breaking_requested:!!f.get('bk'),is_breaking:adm&&!!f.get('bk')&&st==='published',author_id:m.id,slug:'n-'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),status:st,published_at:st==='published'?new Date().toISOString():null}).select('id,status').single();
 if(error)return {err:error.message};
 await s.from('activity_logs').insert({actor_id:m.id,action:'news_'+n.status,ref_id:n.id});
 if(n.status==='pending')await s.from('notifications').insert({to_admin:true,title:'નવા સમાચાર મંજૂરી માટે',ref_id:n.id});
 return {ok:n.status}}
+
+export async function saveReel(m:any,f:FormData){const s=await sb();const adm=m.role==='admin';const v=await up(s,m.id,f.get('vf') as File,['video/mp4'],50e6);const yt=String(f.get('yt')||'').trim();if(!v&&!yt)return {err:'વિડિયો જરૂરી'};
+const {error}=await s.from('reels').insert({title:String(f.get('title')||'').slice(0,200),video_url:v||yt,author_id:m.id,taluka_id:adm?(+(f.get('t') as string)||null):m.taluka_id,active:adm||!!m.can_publish});return error?{err:error.message}:{ok:1}}

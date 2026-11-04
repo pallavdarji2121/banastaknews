@@ -1,0 +1,1 @@
+export default function manifest(){return {name:'બનાસ તક',short_name:'બનાસ તક',start_url:'/',display:'standalone' as const,background_color:'#ffffff',theme_color:'#E53935',icons:[{src:'/logo.png',sizes:'any',type:'image/png'}]}}

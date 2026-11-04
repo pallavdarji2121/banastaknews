@@ -1,0 +1,4 @@
+import Link from 'next/link';import {sb} from '@/lib/supabase';import ReelFeed from './ReelFeed';
+export const metadata={title:'રીલ | બનાસ તક'};
+export default async function P(){const s=await sb();const {data}=await s.from('reels').select('id,title,video_url').eq('active',true).order('created_at',{ascending:false}).limit(30);
+return <div className="bg-black min-h-screen"><Link href="/" className="fixed top-3 left-3 z-20 bg-black/60 text-white rounded-full px-4 py-2 font-bold">← હોમ</Link><div className="fixed top-3 right-3 z-20 text-white font-black bg-red rounded-full px-4 py-2">🎬 બનાસ તક રીલ</div>{data?.length?<ReelFeed items={data}/>:<div className="h-screen flex items-center justify-center text-white text-center p-6">હજી કોઈ રીલ નથી.<br/>Admin/રિપોર્ટર પેનલમાંથી રીલ અપલોડ કરો.</div>}</div>}

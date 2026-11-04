@@ -1,15 +1,13 @@
-import Editor from '@/app/Editor';
-export default function NewsFields({cats,tals,vil,admin}:{cats:any[],tals?:any[],vil?:string[],admin?:boolean}){const L='block text-sm font-semibold mb-1';
-return <div className="space-y-4">
-<div><label className={L}>હેડલાઇન *</label><input name="title" className="inp text-lg font-bold" required placeholder="સમાચારનું શીર્ષક"/></div>
-<div><label className={L}>ટૂંકું વર્ણન</label><input name="summary" className="inp" placeholder="1-2 લીટીમાં સારાંશ"/></div>
-<div><label className={L}>સંપૂર્ણ સમાચાર *</label><Editor/></div>
-<div className="grid gap-4 sm:grid-cols-3"><div><label className={L}>શ્રેણી *</label><select name="c" className="inp" required><option value="">પસંદ કરો</option>{cats.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</select></div>
-{admin&&<div><label className={L}>તાલુકો</label><select name="t" className="inp"><option value="">— ગુજરાત/દેશ —</option>{tals?.map(t=><option key={t.id} value={t.id}>{t.districts?.name} – {t.name}</option>)}</select></div>}
-<div><label className={L}>ગામ (લખો, નવું હશે તો ઉમેરાશે)</label><input name="vn" list="vl" className="inp" placeholder="ગામનું નામ"/><datalist id="vl">{vil?.map(v=><option key={v} value={v}/>)}</datalist></div></div>
-<div className="grid gap-4 sm:grid-cols-2"><div><label className={L}>મુખ્ય ફોટો (JPG/PNG/WebP, 5MB સુધી)</label><input name="img" type="file" accept="image/jpeg,image/png,image/webp" className="inp"/></div>
-<div><label className={L}>વધારાના ફોટા (6 સુધી)</label><input name="gal" type="file" multiple accept="image/jpeg,image/png,image/webp" className="inp"/></div>
-<div><label className={L}>વિડિયો અપલોડ (MP4, 50MB સુધી)</label><input name="vf" type="file" accept="video/mp4" className="inp"/></div>
-<div><label className={L}>અથવા YouTube લિંક</label><input name="yt" className="inp" placeholder="https://youtu.be/…"/></div></div>
-<label className="flex items-center gap-2 font-semibold"><input type="checkbox" name="bk" className="w-5 h-5"/> ⚡ બ્રેકિંગ ન્યૂઝ {admin?'':'(એડમિન મંજૂરી જરૂરી)'}</label>
-<div className="flex gap-3 flex-wrap"><button name="mode" value="draft" className="btn">💾 ડ્રાફ્ટ સાચવો</button><button name="mode" value="submit" className="btnr">{admin?'🚀 પ્રકાશિત કરો':'📤 મંજૂરી માટે મોકલો'}</button></div></div>}
+import Editor from '@/app/Editor';import Pv from '@/app/Pv';
+export default function NewsFields({cats,tals,vil,admin,loc}:{cats:any[],tals?:any[],vil?:string[],admin?:boolean,loc?:string}){const L='block text-sm font-bold mb-1.5';
+const Box=({t,children}:any)=><div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 bg-neutral-50 dark:bg-neutral-900/50"><div className="font-black mb-3">{t}</div>{children}</div>;
+return <div className="grid gap-6 lg:grid-cols-3"><div className="lg:col-span-2 space-y-5">
+<div><label className={L}>✍️ હેડલાઇન *</label><input name="title" className="inp !text-xl !font-black !py-3" required maxLength={250} placeholder="આકર્ષક શીર્ષક લખો"/></div>
+<div><label className={L}>ટૂંકું વર્ણન</label><input name="summary" className="inp" maxLength={500} placeholder="1-2 લીટીમાં સારાંશ (કાર્ડ અને શેરમાં દેખાશે)"/></div>
+<div><label className={L}>સંપૂર્ણ સમાચાર *</label><Editor rows={16}/></div>
+<Box t="🖼️ ફોટા અને વિડિયો"><div className="grid gap-4 sm:grid-cols-2"><Pv name="img" label="મુખ્ય ફોટો (5MB સુધી)"/><div><label className={L}>વધારાના ફોટા (6 સુધી)</label><input name="gal" type="file" multiple accept="image/jpeg,image/png,image/webp" className="inp"/></div><div><label className={L}>વિડિયો અપલોડ (MP4, 50MB)</label><input name="vf" type="file" accept="video/mp4" className="inp"/></div><div><label className={L}>અથવા YouTube લિંક</label><input name="yt" className="inp" placeholder="https://youtu.be/…"/></div></div></Box></div>
+<div className="space-y-5 lg:sticky lg:top-6 self-start">
+<Box t="🗂️ ક્યાં ક્યાં પ્રકાશિત કરવું? *"><p className="text-xs text-neutral-500 mb-3">એક કે વધુ વિભાગ પસંદ કરો – સમાચાર બધામાં દેખાશે.</p><div className="flex flex-wrap gap-2">{cats.map(c=><label key={c.id} className="cursor-pointer"><input type="checkbox" name="sec" value={c.id} className="peer sr-only"/><span className="block px-3.5 py-2 rounded-full border-2 border-neutral-300 dark:border-neutral-600 text-sm font-bold peer-checked:bg-red peer-checked:text-white peer-checked:border-red peer-focus-visible:ring-2 ring-red transition">{c.name}</span></label>)}</div></Box>
+<Box t="📍 સ્થાન">{admin?<div className="space-y-3"><div><label className={L}>તાલુકો</label><select name="t" className="inp"><option value="">— ગુજરાત/દેશ —</option>{tals?.map(t=><option key={t.id} value={t.id}>{t.districts?.name} – {t.name}</option>)}</select></div></div>:<p className="text-sm mb-3">તમારો તાલુકો: <b>{loc}</b></p>}<div className="mt-3"><label className={L}>ગામ (લખો – નવું હશે તો ઉમેરાશે)</label><input name="vn" list="vl" className="inp" placeholder="ગામનું નામ"/><datalist id="vl">{vil?.map(v=><option key={v} value={v}/>)}</datalist></div></Box>
+<Box t="⚙️ વિકલ્પો"><label className="flex items-center gap-3 font-semibold"><input type="checkbox" name="bk" className="w-5 h-5 accent-red"/> ⚡ બ્રેકિંગ ન્યૂઝ {admin?'':'(એડમિન મંજૂરી)'}</label></Box>
+<div className="flex gap-3 flex-wrap"><button name="mode" value="draft" className="btn flex-1">💾 ડ્રાફ્ટ</button><button name="mode" value="submit" className="btnr flex-[2] !py-3 text-lg">{admin?'🚀 પ્રકાશિત કરો':'📤 મંજૂરી માટે મોકલો'}</button></div></div></div>}
