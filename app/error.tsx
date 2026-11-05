@@ -1,0 +1,3 @@
+'use client';
+export default function E({error,reset}:{error:Error,reset:()=>void}){const db=/relation|column|does not exist/i.test(error.message||'');
+return <div className="min-h-[70vh] flex items-center justify-center text-center p-6"><div><div className="text-7xl mb-4">⚠️</div><h1 className="text-3xl font-black">કંઈક ભૂલ થઈ</h1><p className="text-neutral-500 my-3 max-w-md mx-auto">{db?'ડેટાબેઝ SQL પેચ ચલાવવાનું બાકી લાગે છે – README માં patch_v3 → v4 → v5 ક્રમ જુઓ.':'થોડી વાર પછી ફરી પ્રયત્ન કરો.'}</p><div className="flex gap-3 justify-center"><button onClick={reset} className="btnr">🔄 ફરી પ્રયત્ન</button><a href="/" className="btn inline-block">🏠 હોમ</a></div></div></div>}

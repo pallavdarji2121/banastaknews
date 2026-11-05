@@ -38,3 +38,10 @@ Note: this code was written without running `npm install`/build; run `npm run bu
 - Site opens in LIGHT mode by default; ☀️ લાઇટ / 🌙 ડાર્ક switch in top bar (choice remembered).
 - Home: weather (Open-Meteo, no key), e-paper promo with download, rashifal chips, reels row.
 - Still REQUIRED: run `supabase/patch_v5.sql` once (login, e-paper, reels, multi-section tables).
+
+## v7 – Rashifal in Gujarati, automatic
+English horoscope API -> Gujarati (MyMemory free, or Google Translation if GOOGLE_TRANSLATE_KEY). Auto: first visit of /rashifal each day fetches it; on Vercel a daily cron (00:30 IST) too. Admin text (manual) is never overwritten. Admin -> રાશિફળ shows exact error if a fetch fails.
+
+## v8
+UI polish (animations, skeleton loading, glass nav, active sidebar item), Ctrl+K live search, article tools (progress bar, listen in Gujarati, A−/A+, print, reading time), friendly 404/error pages, back-to-top, session refresh middleware on all pages.
+Checklist: SQL order patch_v3 -> patch_v4 -> patch_v5; Auth: sign-ups ON; `npm i`; `npm run seed`; `npm run dev`.

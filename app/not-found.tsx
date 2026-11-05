@@ -1,0 +1,2 @@
+import Link from 'next/link';
+export default function NF(){return <div className="min-h-[70vh] flex items-center justify-center text-center p-6"><div><div className="text-8xl font-black text-red">404</div><h1 className="text-2xl font-black mt-2">પેજ મળ્યું નહીં</h1><p className="text-neutral-500 my-4">આ સમાચાર અથવા પેજ ઉપલબ્ધ નથી.</p><Link href="/" className="btnr inline-block">🏠 હોમ પર જાઓ</Link></div></div>}
