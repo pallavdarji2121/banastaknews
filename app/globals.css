@@ -19,3 +19,4 @@ html{scroll-behavior:smooth}
 .skel{background:linear-gradient(90deg,#ececf0 25%,#f7f7fa 37%,#ececf0 63%);background-size:400% 100%;animation:sk 1.4s ease infinite}
 .dark .skel{background:linear-gradient(90deg,#1f2026 25%,#2b2c34 37%,#1f2026 63%);background-size:400% 100%}
 @media print{header,footer,nav,.fixed{display:none!important}}
+@media(max-width:640px){html{font-size:15px}}
