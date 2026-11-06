@@ -45,3 +45,8 @@ English horoscope API -> Gujarati (MyMemory free, or Google Translation if GOOGL
 ## v8
 UI polish (animations, skeleton loading, glass nav, active sidebar item), Ctrl+K live search, article tools (progress bar, listen in Gujarati, A−/A+, print, reading time), friendly 404/error pages, back-to-top, session refresh middleware on all pages.
 Checklist: SQL order patch_v3 -> patch_v4 -> patch_v5; Auth: sign-ups ON; `npm i`; `npm run seed`; `npm run dev`.
+
+## v9
+- NEW SQL: run `supabase/patch_v9.sql` once (polls, reactions, tips).
+- Fonts: Hind Vadodara (body) + Rasa (headlines). Mobile: app-style header with ☰ drawer menu + chip nav.
+- New: daily poll, article reactions, citizen news form (/mokalo) + admin Polls/Tips pages, taluka "stories" row on mobile.

@@ -1,0 +1,7 @@
+import {Header,Footer,Sec} from '@/lib/ui';import {sendTip} from '@/lib/actions';
+export const metadata={title:'સમાચાર મોકલો | બનાસ તક'};
+export default async function P({searchParams}:{searchParams:Promise<any>}){const q=await searchParams;
+return <div><Header/><main className="wrap max-w-2xl"><Sec t="✍️ તમારા ગામના સમાચાર મોકલો">{q.ok?<div className="rounded-2xl bg-green-100 text-green-800 p-6 font-semibold">✅ આભાર! તમારો સંદેશ મળી ગયો. અમારી ટીમ તપાસીને યોગ્ય લાગશે તો પ્રકાશિત કરશે.</div>:<form action={sendTip} className="space-y-3 rounded-2xl border border-neutral-200 dark:border-neutral-700 p-5"><p className="text-sm text-neutral-500">ગામની ઘટના, સમસ્યા કે સારા સમાચાર – ફોટા સાથે મોકલો. તમારો નંબર ફક્ત અમારી ટીમ જોશે.</p>
+{q.e&&<p className="text-red font-semibold">{q.e==='2'?'ફોટો JPG/PNG/WebP અને 4MB થી નાનો હોવો જોઈએ.':'સમાચાર (10+ અક્ષર) અને મોબાઇલ નંબર જરૂરી છે.'}</p>}
+<input name="name" placeholder="તમારું નામ" className="inp"/><input name="phone" inputMode="tel" placeholder="મોબાઇલ નંબર *" className="inp" required/><input name="village" placeholder="ગામ / તાલુકો" className="inp"/><textarea name="text" rows={6} placeholder="શું બન્યું? વિગતવાર લખો *" className="inp" required/><div><label className="text-sm font-bold">ફોટો (વૈકલ્પિક, 4MB સુધી)</label><input name="photo" type="file" accept="image/jpeg,image/png,image/webp" className="inp"/></div>
+<input name="website" tabIndex={-1} autoComplete="off" className="hidden"/><button className="btnr w-full !py-3 text-lg">📤 મોકલો</button></form>}</Sec></main><Footer/></div>}

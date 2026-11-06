@@ -20,3 +20,7 @@ html{scroll-behavior:smooth}
 .dark .skel{background:linear-gradient(90deg,#1f2026 25%,#2b2c34 37%,#1f2026 63%);background-size:400% 100%}
 @media print{header,footer,nav,.fixed{display:none!important}}
 @media(max-width:640px){html{font-size:15px}}
+body{font-family:var(--f-body),system-ui,sans-serif}
+h1,h2,h3,h4,.font-head{font-family:var(--f-head),serif;letter-spacing:-.01em}
+@keyframes slide{from{transform:translateX(-100%)}to{transform:none}}
+.slide{animation:slide .25s ease-out}

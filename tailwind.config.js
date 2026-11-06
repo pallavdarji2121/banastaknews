@@ -1,1 +1,1 @@
-module.exports={darkMode:'class',content:['./app/**/*.{ts,tsx}','./lib/**/*.{ts,tsx}'],theme:{extend:{colors:{red:{DEFAULT:'#E53935'}}}},plugins:[]};
+module.exports={darkMode:'class',content:['./app/**/*.{ts,tsx}','./lib/**/*.{ts,tsx}'],theme:{extend:{colors:{red:{DEFAULT:'#E53935'}},fontFamily:{body:['var(--f-body)','system-ui','sans-serif'],head:['var(--f-head)','serif']}}},plugins:[]};
