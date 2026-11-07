@@ -1,8 +1,8 @@
-import {revalidatePath} from 'next/cache';import {redirect} from 'next/navigation';import {sb} from '@/lib/supabase';import {guard} from '@/lib/admin';import {saveNews} from '@/lib/news';import NewsFields from '@/lib/NewsFields';import {PT,Panel,Msg} from '@/lib/ui';
-async function add(f:FormData){'use server';const m=await guard();const r:any=await saveNews(m,f,String(f.get('mode')));revalidatePath('/');redirect('/admin/news?m='+(r.err?'err':'ok'))}
+import {rvAll} from '@/lib/rv';import {revalidatePath} from 'next/cache';import {redirect} from 'next/navigation';import {sb} from '@/lib/supabase';import {guard} from '@/lib/admin';import {saveNews} from '@/lib/news';import NewsFields from '@/lib/NewsFields';import {PT,Panel,Msg} from '@/lib/ui';
+async function add(f:FormData){'use server';const m=await guard();const r:any=await saveNews(m,f,String(f.get('mode')));revalidatePath('/');rvAll();redirect('/admin/news?m='+(r.err?'err':'ok'))}
 async function flag(f:FormData){'use server';await guard();const k=String(f.get('k')),id=String(f.get('id'));const s=await sb();
 if(k==='unpublish')await s.from('news').update({status:'archived'}).eq('id',id);else if(k==='publish')await s.from('news').update({status:'published',published_at:new Date().toISOString()}).eq('id',id);else if(k==='del')await s.from('news').update({deleted_at:new Date().toISOString()}).eq('id',id);else if(['is_featured','is_breaking'].includes(k)){const {data:n}:any=await s.from('news').select(k).eq('id',id).single();await s.from('news').update({[k]:!n[k]}).eq('id',id)}
-revalidatePath('/admin/news');revalidatePath('/')}
+revalidatePath('/admin/news');rvAll();revalidatePath('/');rvAll()}
 const SL:any={published:'✅ પ્રકાશિત',pending:'⏳ બાકી',draft:'📝 ડ્રાફ્ટ',rejected:'❌ નામંજૂર',archived:'📦 અનપબ્લિશ'};
 export default async function P({searchParams}:{searchParams:Promise<any>}){const q=await searchParams;await guard();const s=await sb();
 const [{data:cats},{data:tals},{data:all}]=await Promise.all([s.from('categories').select('id,name').eq('active',true).order('sort'),s.from('talukas').select('id,name,districts(name)').order('name'),s.from('news').select('id,title,status,is_featured,is_breaking,views,created_at,profiles(reporter_code)').is('deleted_at',null).order('created_at',{ascending:false}).limit(80)]);

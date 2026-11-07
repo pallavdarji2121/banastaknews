@@ -1,1 +1,1 @@
-module.exports={experimental:{serverActions:{bodySizeLimit:'60mb'}}};
+module.exports={poweredByHeader:false,experimental:{serverActions:{bodySizeLimit:'60mb'}}};

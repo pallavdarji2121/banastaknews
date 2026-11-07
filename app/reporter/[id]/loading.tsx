@@ -1,0 +1,1 @@
+export default function L(){return <div className="space-y-4 animate-pulse"><div className="skel h-10 w-1/3 rounded-xl"/><div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{[1,2,3,4].map(i=><div key={i} className="skel h-24 rounded-2xl"/>)}</div><div className="skel h-64 rounded-2xl"/></div>}

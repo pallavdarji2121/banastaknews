@@ -1,10 +1,10 @@
-import {revalidatePath} from 'next/cache';import {sb,svc,RMAIL} from '@/lib/supabase';import {guard} from '@/lib/admin';import {PT,Panel} from '@/lib/ui';
+import {rvAll} from '@/lib/rv';import {revalidatePath} from 'next/cache';import {sb,svc,RMAIL} from '@/lib/supabase';import {guard} from '@/lib/admin';import {PT,Panel} from '@/lib/ui';
 async function mk(f:FormData){'use server';const a=await guard();const pw=String(f.get('pw'));if(pw.length<8)return;const x=svc();
 const {data:code}=await x.rpc('next_reporter_code');const {data,error}=await x.auth.admin.createUser({email:RMAIL(code),password:pw,email_confirm:true});if(error||!data.user)return;
 const t=+(f.get('t') as string);const {data:tk}=await x.from('talukas').select('district_id').eq('id',t).single();
 await x.from('profiles').insert({id:data.user.id,role:'reporter',reporter_code:code,full_name:String(f.get('name')),mobile:String(f.get('mob')),taluka_id:t,district_id:tk?.district_id});
-await x.from('activity_logs').insert({actor_id:a.id,action:'reporter_created',ref_id:data.user.id});revalidatePath('/admin/reporters')}
-async function tog(f:FormData){'use server';await guard();const k=String(f.get('k'));if(!['active','can_publish'].includes(k))return;const s=await sb();await s.from('profiles').update({[k]:f.get('v')==='1'}).eq('id',String(f.get('id')));revalidatePath('/admin/reporters')}
+await x.from('activity_logs').insert({actor_id:a.id,action:'reporter_created',ref_id:data.user.id});revalidatePath('/admin/reporters');rvAll()}
+async function tog(f:FormData){'use server';await guard();const k=String(f.get('k'));if(!['active','can_publish'].includes(k))return;const s=await sb();await s.from('profiles').update({[k]:f.get('v')==='1'}).eq('id',String(f.get('id')));revalidatePath('/admin/reporters');rvAll()}
 async function reset(f:FormData){'use server';await guard();const pw=String(f.get('pw'));if(pw.length<8)return;await svc().auth.admin.updateUserById(String(f.get('id')),{password:pw})}
 export default async function P(){await guard();const s=await sb();const [{data:reps},{data:ts},{data:auth}]=await Promise.all([s.from('profiles').select('*,talukas(name),districts(name)').eq('role','reporter').order('created_at'),s.from('talukas').select('id,name,districts(name)').order('name'),s.from('news').select('author_id').is('deleted_at',null).limit(5000)]);
 const per=(id:string)=>(auth||[]).filter((x:any)=>x.author_id===id).length;

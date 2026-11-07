@@ -64,3 +64,12 @@ SQL: run supabase/patch_v11.sql (jobs, mandi_rates). New: pretty Diwali card wit
 - **NEW /panchang – Choghadiya, Rahukaal, Gulika, Yamaganda, Abhijit** for the chosen taluka, calculated from real sunrise/sunset (Open-Meteo). Live "current choghadiya" box.
 - **NEW /radio – Banas Radio**: phone reads the latest 15 news aloud in Gujarati (browser text-to-speech, play/pause/next, speed 0.8x–1.25x). Best in Chrome on Android.
 - Home page: 4 quick tiles (frame, card, panchang, radio); menus/footer/sitemap updated.
+
+## v13 – speed
+- Shared data (categories, talukas, site settings, home news, e-paper/reels/mandi) is cached on the server (lib/cache.ts) and refreshed automatically after any admin/reporter save (lib/rv.ts). Home news refreshes at most every 45 s.
+- Visitors without a login cookie skip the Supabase auth call completely (middleware, getMember, me()).
+- Header/Footer queries run in parallel; slow external APIs (Yahoo, cricket, weather) time out after 3 s instead of blocking the page.
+- Photos are compressed in the browser before upload (max 1600px JPEG) – app/ImgCompress.tsx.
+- Instant skeleton screens in admin and reporter panels (loading.tsx).
+- `npm run dev` now uses Turbopack. For real speed use: `npm run build` then `npm start` (dev mode is always slower).
+- Tip: Supabase project region should be Mumbai (ap-south-1); a far region adds 200–400 ms to every query.

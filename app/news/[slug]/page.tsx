@@ -1,4 +1,4 @@
-import {Reactions} from '@/lib/Engage';
+import {rvAll} from '@/lib/rv';import {Reactions} from '@/lib/Engage';
 import AT from '@/app/ArticleTools';
 import Link from 'next/link';import {notFound} from 'next/navigation';import {revalidatePath} from 'next/cache';import {sb} from '@/lib/supabase';import {getMember} from '@/lib/member';import {Header,Footer,Vid,Md,Card,Mini,ago} from '@/lib/ui';
 export async function generateMetadata({params}:{params:Promise<any>}){const {slug}=await params;const s=await sb();const {data:n}=await s.from('news').select('title,summary,thumbnail_url').eq('slug',slug).single();return {title:n?`${n.title} | બનાસ તક`:'બનાસ તક',description:n?.summary,openGraph:{images:n?.thumbnail_url?[n.thumbnail_url]:[]}}}

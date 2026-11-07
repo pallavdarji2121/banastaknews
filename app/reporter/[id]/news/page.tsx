@@ -1,5 +1,5 @@
-import Link from 'next/link';import {revalidatePath} from 'next/cache';import {sb} from '@/lib/supabase';import {PT,Panel,ago} from '@/lib/ui';
-async function sub(f:FormData){'use server';const s=await sb();await s.from('news').update({status:'pending'}).eq('id',String(f.get('id')));revalidatePath('/reporter')}
+import {rvAll} from '@/lib/rv';import Link from 'next/link';import {revalidatePath} from 'next/cache';import {sb} from '@/lib/supabase';import {PT,Panel,ago} from '@/lib/ui';
+async function sub(f:FormData){'use server';const s=await sb();await s.from('news').update({status:'pending'}).eq('id',String(f.get('id')));revalidatePath('/reporter');rvAll()}
 const SL:any={published:['✅ પ્રકાશિત','bg-green-100 text-green-800'],pending:['⏳ મંજૂરી બાકી','bg-amber-100 text-amber-800'],draft:['📝 ડ્રાફ્ટ','bg-sky-100 text-sky-800'],rejected:['❌ નામંજૂર','bg-red/10 text-red'],archived:['📦 અનપબ્લિશ','bg-neutral-200 text-neutral-700']};
 export default async function P({params}:{params:Promise<any>}){const {id}=await params;const s=await sb();const {data:p}=await s.from('profiles').select('id').eq('reporter_code',id).single();
 const {data}=await s.from('news').select('id,slug,title,status,reject_reason,views,created_at').eq('author_id',p.id).is('deleted_at',null).order('created_at',{ascending:false});
