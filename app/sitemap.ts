@@ -1,3 +1,3 @@
 import {sb} from '@/lib/supabase';
 export default async function sitemap(){const s=await sb();const {data}=await s.from('news').select('slug,published_at').eq('status','published').is('deleted_at',null).order('published_at',{ascending:false}).limit(1000);const b=process.env.NEXT_PUBLIC_SITE_URL||'';
-return [{url:b+'/'},...['video','reels','epaper','market','cricket','gold','rashifal'].map(p=>({url:`${b}/${p}`})),...(data||[]).map((n:any)=>({url:`${b}/news/${n.slug}`,lastModified:n.published_at}))]}
+return [{url:b+'/'},...['video','reels','epaper','market','cricket','gold','rashifal','mandi','havaman','jobs','shubhechha','frame','panchang','radio'].map(p=>({url:`${b}/${p}`})),...(data||[]).map((n:any)=>({url:`${b}/news/${n.slug}`,lastModified:n.published_at}))]}

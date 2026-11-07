@@ -53,3 +53,14 @@ Checklist: SQL order patch_v3 -> patch_v4 -> patch_v5; Auth: sign-ups ON; `npm i
 
 ## v10
 Stock search + detail (price, today change, day range, 52w range, 1W/1M/6M/1Y performance, charts, watchlist), top gainers/losers (Yahoo Finance, unofficial/delayed). Diwali popup + banner (admin -> Website Settings, auto-off after end date) and greeting-card maker (/shubhechha).
+
+## v11
+SQL: run supabase/patch_v11.sql (jobs, mandi_rates). New: pretty Diwali card with logo, diya-lighting (Happy Diwali to your family), Mandi bhav (/mandi, admin enters daily), taluka weather + farmer advice (/havaman, Open-Meteo), jobs board (/jobs).
+
+## v12 (no new SQL needed)
+- **Diwali card redesigned**: clean layout, big diya, logo badge on top, 4 colour themes (red / blue / saffron / green). No website text on the card. WhatsApp share button.
+- **Diya**: tap any diya to light it → "Happy Diwali to your family!". "Light all" button; when all 5 are lit a button leads to the card maker.
+- **NEW /frame – Diwali photo frame**: user picks a photo, zoom/move, adds family name → round gold frame with logo → download / WhatsApp status. Runs fully on the phone (nothing uploaded).
+- **NEW /panchang – Choghadiya, Rahukaal, Gulika, Yamaganda, Abhijit** for the chosen taluka, calculated from real sunrise/sunset (Open-Meteo). Live "current choghadiya" box.
+- **NEW /radio – Banas Radio**: phone reads the latest 15 news aloud in Gujarati (browser text-to-speech, play/pause/next, speed 0.8x–1.25x). Best in Chrome on Android.
+- Home page: 4 quick tiles (frame, card, panchang, radio); menus/footer/sitemap updated.

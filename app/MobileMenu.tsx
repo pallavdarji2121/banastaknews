@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';import {useEffect,useState} from 'react';
 const SP:any={'ક્રિકેટ':'/cricket','શેરબજાર':'/market','ગોલ્ડ':'/gold','રાશિફળ':'/rashifal'};
-const Q=[['📰','ઈ-પેપર','/epaper'],['🎬','રીલ','/reels'],['📺','વિડિયો','/video'],['🔮','રાશિફળ','/rashifal'],['🥇','ગોલ્ડ','/gold'],['✍️','સમાચાર મોકલો','/mokalo']];
+const Q=[['📰','ઈ-પેપર','/epaper'],['🎬','રીલ','/reels'],['📺','વિડિયો','/video'],['🔮','રાશિફળ','/rashifal'],['🥇','ગોલ્ડ','/gold'],['✍️','સમાચાર મોકલો','/mokalo'],['🌾','માર્કેટયાર્ડ','/mandi'],['🌦','હવામાન','/havaman'],['💼','જોબ્સ','/jobs'],['🖼','ફોટો ફ્રેમ','/frame'],['🕉','પંચાંગ','/panchang'],['📻','રેડિયો','/radio']];
 export default function MM({cats,ts,user,phone,wa,name,logo}:any){const [o,setO]=useState(false);const [d,setD]=useState(0);
 useEffect(()=>{document.body.style.overflow=o?'hidden':'';return()=>{document.body.style.overflow=''}},[o]);
 const X=()=>setO(false);const th=(v:boolean)=>{document.documentElement.classList.toggle('dark',v);try{localStorage.setItem('t',v?'dark':'light')}catch{}};
