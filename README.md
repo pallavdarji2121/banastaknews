@@ -50,3 +50,6 @@ Checklist: SQL order patch_v3 -> patch_v4 -> patch_v5; Auth: sign-ups ON; `npm i
 - NEW SQL: run `supabase/patch_v9.sql` once (polls, reactions, tips).
 - Fonts: Hind Vadodara (body) + Rasa (headlines). Mobile: app-style header with ☰ drawer menu + chip nav.
 - New: daily poll, article reactions, citizen news form (/mokalo) + admin Polls/Tips pages, taluka "stories" row on mobile.
+
+## v10
+Stock search + detail (price, today change, day range, 52w range, 1W/1M/6M/1Y performance, charts, watchlist), top gainers/losers (Yahoo Finance, unofficial/delayed). Diwali popup + banner (admin -> Website Settings, auto-off after end date) and greeting-card maker (/shubhechha).

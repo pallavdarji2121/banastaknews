@@ -1,0 +1,4 @@
+export default function Spark({pts,w=640,h=240}:{pts:{c:number}[],w?:number,h?:number}){if(pts.length<2)return <div className="text-neutral-500 text-sm py-10 text-center">ચાર્ટ માટે ડેટા ઉપલબ્ધ નથી</div>;
+const v=pts.map(p=>p.c);const mn=Math.min(...v),mx=Math.max(...v),pad=(mx-mn)*0.08||1;const lo=mn-pad,hi=mx+pad;const X=(i:number)=>i/(v.length-1)*w;const Y=(x:number)=>h-(x-lo)/(hi-lo)*h;
+const d=v.map((x,i)=>`${i?'L':'M'}${X(i).toFixed(1)} ${Y(x).toFixed(1)}`).join(' ');const col=v[v.length-1]>=v[0]?'#16a34a':'#E53935';
+return <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-auto"><defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor={col} stopOpacity=".28"/><stop offset="1" stopColor={col} stopOpacity="0"/></linearGradient></defs><path d={`${d} L${w} ${h} L0 ${h} Z`} fill="url(#sg)"/><path d={d} fill="none" stroke={col} strokeWidth="2.5" strokeLinejoin="round"/></svg>}
