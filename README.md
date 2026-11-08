@@ -73,3 +73,17 @@ SQL: run supabase/patch_v11.sql (jobs, mandi_rates). New: pretty Diwali card wit
 - Instant skeleton screens in admin and reporter panels (loading.tsx).
 - `npm run dev` now uses Turbopack. For real speed use: `npm run build` then `npm start` (dev mode is always slower).
 - Tip: Supabase project region should be Mumbai (ap-south-1); a far region adds 200–400 ms to every query.
+
+## v14 – 4 new news features  (RUN supabase/patch_v14.sql once in Supabase SQL editor)
+- **🔍 /afwah – અફવા ચેક**: readers send a viral WhatsApp message; admin (Admin → અફવા ચેક) writes a verdict (ખોટું / ભ્રામક / સાચું …) + explanation → public verdict cards with WhatsApp share. Reader messages stay hidden until published. Honeypot + 5/day per device limit.
+- **⏳ /vachan – વચન ટ્રેકર**: promises by leaders/government/panchayat with deadline countdown ("12 દિવસ બાકી" / "5 દિવસ મોડું"), work-progress bar vs time-elapsed bar and dated updates. Admin → વચન ટ્રેકર.
+- **📰 /maru-akhbar – મારું અખબાર**: reader picks talukas + topics + own name → a personal newspaper page (masthead, lead story, columns). Remembered on the phone; Print / Save as PDF and WhatsApp share. No database needed.
+- **⚡ /stories – સ્ટોરીઝ**: Instagram-style full-screen news stories (auto-advance, tap left/right, hold to pause, swipe down to close). Story circles also appear at the top of the home page. No database needed.
+
+## v15
+- "દીવો પ્રગટાવો" (DiyaSet) now appears ONLY inside the festival pop-up – removed from the home page and the card page.
+- Mobile home: the round taluka circles are replaced by the Stories row (tap a circle → /stories). Taluka filter chips are still available in the news section.
+
+## v16 – cleaner landing page
+- Removed the 8 coloured service cards from the home page. Home now = Stories row (mobile + desktop) → trending → news.
+- New **✨ સેવાઓ** dropdown in the desktop menu and **✨ સેવાઓ** chip on mobile, plus the full hub page **/seva** (grouped cards: news experiences, daily services, festival). All services are defined once in lib/services.ts.
