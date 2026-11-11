@@ -87,3 +87,15 @@ SQL: run supabase/patch_v11.sql (jobs, mandi_rates). New: pretty Diwali card wit
 ## v16 – cleaner landing page
 - Removed the 8 coloured service cards from the home page. Home now = Stories row (mobile + desktop) → trending → news.
 - New **✨ સેવાઓ** dropdown in the desktop menu and **✨ સેવાઓ** chip on mobile, plus the full hub page **/seva** (grouped cards: news experiences, daily services, festival). All services are defined once in lib/services.ts.
+
+## v17
+- Removed all Diwali-only items: pop-up, diya, greeting-card page (/shubhechha now redirects to /frame) and the festival panel in Admin → Settings.
+- **🖼 /frame – ફેસ્ટિવલ ફોટો ફ્રેમ**: 32 festivals/occasions (ઉત્તરાયણ … ક્રિસમસ, જન્મદિવસ, શુભ સવાર), round/square frame, own message. Add a festival = one line in lib/festivals.ts. Link a festival directly: /frame?f=holi
+- **🌅 Home "આજનો દિવસ" widget** (daily thought + 3 daily habits + 🔥 streak, stored on the phone) and **/suvichar** – daily thought card maker for WhatsApp status (lib/thoughts.ts).
+- **🧮 /kamai** – farmer earnings calculator from mandi rates (which market pays most). **🕰 /archive** – news time-machine: pick any date.
+- New premium footer (lib/FooterView.tsx): WhatsApp CTA band, grouped links, social icons, back-to-top, developer credit.
+
+## v18
+- Home page: the "આજનો દિવસ" card removed from the landing page – it now lives on **/seva** (top).
+- NEW **once-a-day pop-up "આજની ખાસ ઝલક"** (app/BriefPopup.tsx): top 5 news (breaking first), latest રુમર checks (અફવા ચેક) and overdue promises (વચન ટ્રેકર) + quick buttons (Stories / Radio / Services). Shows only on the plain home page, once per day per phone, after ~2 s; hidden automatically when there is nothing to show.
+- UI polish: gradient buttons with soft shadow, input focus glow, scroll-progress line at the top (app/ReadBar.tsx), reduced-motion support.

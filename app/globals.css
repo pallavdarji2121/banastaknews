@@ -34,3 +34,14 @@ h1,h2,h3,h4,.font-head{font-family:var(--f-head),serif;letter-spacing:-.01em}
 @keyframes burst{from{transform:translate(0,0) scale(1);opacity:1}to{transform:translate(var(--x),var(--y)) scale(.4);opacity:0}}
 
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+/* ---- v18 polish ---- */
+.btnr{background-image:linear-gradient(135deg,#E53935,#ff6a3d);box-shadow:0 8px 20px -8px rgba(229,57,53,.6);transition:transform .15s ease,box-shadow .2s ease,opacity .2s}
+.btnr:hover{transform:translateY(-1px);box-shadow:0 12px 24px -8px rgba(229,57,53,.7)}.btnr:active{transform:translateY(0) scale(.98)}
+.btn{transition:transform .15s ease,opacity .2s}.btn:hover{opacity:.9;transform:translateY(-1px)}.btn:active{transform:scale(.98)}
+.inp{transition:border-color .2s,box-shadow .2s}.inp:focus{outline:none;border-color:#E53935;box-shadow:0 0 0 3px rgba(229,57,53,.15)}
+:focus-visible{outline:2px solid #E53935;outline-offset:2px;border-radius:6px}
+img{-webkit-user-drag:none}
+@keyframes briefUp{from{opacity:0;transform:translateY(60px) scale(.97)}to{opacity:1;transform:none}}
+.brief-in{animation:briefUp .45s cubic-bezier(.2,.9,.25,1) both}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}

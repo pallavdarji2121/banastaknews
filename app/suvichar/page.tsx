@@ -1,0 +1,4 @@
+import {Header,Footer,Sec} from '@/lib/ui';import Maker from './Maker';
+export const metadata={title:'આજનો સુવિચાર – WhatsApp કાર્ડ બનાવો | બનાસ તક',description:'રોજનો નવો સુવિચાર. તમારા નામ સાથે સુંદર કાર્ડ બનાવીને WhatsApp સ્ટેટસ પર મૂકો.'};
+export default function P(){return <div><Header/><main className="wrap max-w-5xl"><div className="mt-6 rounded-3xl bg-gradient-to-br from-amber-400 via-orange-500 to-rose-600 text-white p-6 sm:p-8 relative overflow-hidden"><div className="absolute -right-4 -top-6 text-[130px] opacity-15 select-none">🌅</div><div className="text-sm font-bold opacity-90">🌅 આજનો સુવિચાર</div><h1 className="font-head text-3xl sm:text-5xl font-bold leading-tight mt-1">રોજ એક નવો વિચાર, એક સુંદર કાર્ડ</h1><p className="mt-2 opacity-90">સુવિચાર રોજ રાત્રે 12 વાગ્યે બદલાય છે. તમારા નામ સાથે કાર્ડ બનાવો અને સ્વજનોને મોકલો.</p></div>
+<Sec t="🎨 તમારું કાર્ડ બનાવો"><Maker/></Sec></main><Footer/></div>}

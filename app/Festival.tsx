@@ -1,8 +1,0 @@
-'use client';
-import Link from 'next/link';import {useEffect,useState} from 'react';import DiyaSet from './DiyaSet';
-export default function Festival({title,msg}:{title:string,msg:string}){const [show,setShow]=useState(false);const [ps,setPs]=useState<any[]>([]);
-useEffect(()=>{setPs(Array.from({length:22},(_,i)=>({e:['🪔','✨','🎆','🎇','🪔'][i%5],l:Math.random()*100,d:Math.random()*6,s:6+Math.random()*6,z:16+Math.random()*18})));try{if(!sessionStorage.getItem('fest')){setShow(true);sessionStorage.setItem('fest','1')}}catch{}},[]);
-return <><div className="bg-gradient-to-r from-amber-500 via-orange-600 to-red text-white text-center py-1.5 text-sm font-bold px-3">🪔 {title} 🪔 <Link href="/shubhechha" className="underline ml-2 whitespace-nowrap">🎁 શુભેચ્છા કાર્ડ બનાવો</Link></div>
-{show&&<div className="fixed inset-0 z-[200] bg-black/80 flex items-center justify-center p-4 overflow-y-auto" onClick={()=>setShow(false)}>{ps.map((p,i)=><span key={i} className="fall pointer-events-none" style={{left:p.l+'%',animationDelay:p.d+'s',animationDuration:p.s+'s',fontSize:p.z}}>{p.e}</span>)}
-<div className="pop relative max-w-md w-full my-auto" onClick={e=>e.stopPropagation()}><h2 className="font-head text-center text-3xl sm:text-4xl font-bold leading-tight text-amber-300 mb-2 drop-shadow">{title}</h2><p className="text-center text-white/90 mb-3">{msg}</p><DiyaSet compact/>
-<div className="flex gap-2 mt-3"><Link href="/shubhechha" onClick={()=>setShow(false)} className="flex-1 bg-amber-400 text-red-900 text-center font-bold rounded-xl py-3">🎁 કાર્ડ બનાવો</Link><button onClick={()=>setShow(false)} className="flex-1 bg-white/15 text-white font-bold rounded-xl py-3">વેબસાઇટ જુઓ</button></div></div></div>}</>}

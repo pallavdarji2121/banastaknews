@@ -1,3 +1,5 @@
-import {Header,Footer,Sec} from '@/lib/ui';import FrameMaker from './FrameMaker';
-export const metadata={title:'દિવાળી ફોટો ફ્રેમ | બનાસ તક',description:'તમારો ફોટો મૂકો અને દિવાળીની સુંદર ફ્રેમ બનાવો – WhatsApp સ્ટેટસ અને DP માટે.'};
-export default function P(){return <div><Header/><main className="wrap max-w-4xl"><Sec t="🖼 દિવાળી ફોટો ફ્રેમ"><p className="text-neutral-500 -mt-2 mb-5">ફોટો પસંદ કરો, નામ લખો – સેકન્ડોમાં WhatsApp સ્ટેટસ / DP તૈયાર.</p><FrameMaker/></Sec></main><Footer/></div>}
+import {Header,Footer,Sec} from '@/lib/ui';import FrameMaker from './FrameMaker';import {FESTS,festById} from '@/lib/festivals';
+export const metadata={title:'ફેસ્ટિવલ ફોટો ફ્રેમ – કોઈ પણ તહેવારની ફ્રેમ | બનાસ તક',description:'ઉત્તરાયણ, હોળી, નવરાત્રિ, દિવાળી, ક્રિસમસ સહિત આખા વર્ષના તહેવારો માટે તમારા ફોટા સાથે ફ્રેમ બનાવો – WhatsApp સ્ટેટસ અને DP માટે.'};
+export default async function P({searchParams}:{searchParams:Promise<any>}){const q=await searchParams;
+return <div><Header/><main className="wrap max-w-5xl"><div className="mt-6 rounded-3xl bg-gradient-to-br from-rose-500 via-red to-orange-600 text-white p-6 sm:p-8 relative overflow-hidden"><div className="absolute -right-4 -top-6 text-[130px] opacity-15 select-none">🖼</div><div className="text-sm font-bold opacity-90">🖼 ફેસ્ટિવલ ફોટો ફ્રેમ</div><h1 className="font-head text-3xl sm:text-5xl font-bold leading-tight mt-1">કોઈ પણ તહેવાર, તમારો ફોટો</h1><p className="mt-2 opacity-90">{FESTS.length} તહેવારો અને પ્રસંગો – પસંદ કરો, ફોટો મૂકો, WhatsApp પર મોકલો.</p></div>
+<Sec t="🎨 તમારી ફ્રેમ બનાવો"><FrameMaker initial={festById(q.f).id}/></Sec></main><Footer/></div>}
