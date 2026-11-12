@@ -99,3 +99,8 @@ SQL: run supabase/patch_v11.sql (jobs, mandi_rates). New: pretty Diwali card wit
 - Home page: the "આજનો દિવસ" card removed from the landing page – it now lives on **/seva** (top).
 - NEW **once-a-day pop-up "આજની ખાસ ઝલક"** (app/BriefPopup.tsx): top 5 news (breaking first), latest રુમર checks (અફવા ચેક) and overdue promises (વચન ટ્રેકર) + quick buttons (Stories / Radio / Services). Shows only on the plain home page, once per day per phone, after ~2 s; hidden automatically when there is nothing to show.
 - UI polish: gradient buttons with soft shadow, input focus glow, scroll-progress line at the top (app/ReadBar.tsx), reduced-motion support.
+
+## v19 – Deesa APMC auto rates  (optional SQL: supabase/patch_v19.sql)
+- Rates are copied automatically from https://www.apmcdeesa.com/ – 3 yards: **ડીસા** (main), **ડીસા – વી.જે.પટેલ (શાકભાજી)**, **ભીલડી** – with the APMC date. Parser: lib/apmcParse.ts, sync: lib/mandiSync.ts.
+- When it runs: Vercel Cron daily 10:30 IST (/api/mandi-sync, needs CRON_SECRET env) + visitors' browsers ping it (max every 90 min, 6am–10pm IST). Admin → માર્કેટયાર્ડ ભાવ has a status box and a "હમણાં સિંક કરો" button; manual entry still works.
+- /mandi shows one table per yard (same order as APMC), date chip, ▲▼ vs previous day, "old prices" warning if APMC hasn't updated, WhatsApp share per table. If APMC changes its site layout the sync reports an error and the old rates stay.
